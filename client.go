@@ -27,6 +27,38 @@ const (
 	defaultNamespace = ""
 )
 
+// Connect dials and waits for the "connection" event.
+// It blocks for the timeout duration. If the connection is not established in time,
+// it closes the connection and returns an error.
+func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
+	c, err = Dial(u, tr)
+
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), tr.PingTimeout)
+	handshake := make(chan struct{}, 1)
+
+	if err := c.On(OnConnection, func() {
+		handshake <- struct{}{}
+	}); err != nil {
+		cancel()
+		return nil, err
+	}
+
+	select {
+	case <-handshake:
+		c.Off(OnConnection)
+	case <-ctx.Done():
+		c = nil
+		err = fmt.Errorf("socket.io connection timeout (%v)", tr.PingTimeout)
+	}
+
+	cancel()
+	return c, err
+}
+
 // Dial connects to the host and initializes the socket.io protocol
 func Dial(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 	c = &Client{}
