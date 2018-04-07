@@ -5,7 +5,7 @@ let io = require('socket.io')(app)
 
 app.listen(3000)
 
-console.log('Listening at http://localhost:5432/')
+console.log('Listening at http://localhost:3000/')
 
 function handler (req, res) {
   res.writeHead(200)
