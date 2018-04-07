@@ -411,7 +411,9 @@ func (c *Client) incomingHandler(msg *protocol.Message) {
 	case protocol.MessageTypeAckResponse:
 		c.handleIncomingAckResponse(msg)
 	case protocol.MessageTypeEmpty:
-		c.handleIncomingNamespaceConnection(msg)
+		if msg.Namespace != defaultNamespace {
+			c.handleIncomingNamespaceConnection(msg)
+		}
 	default:
 		err := fmt.Errorf("message type %s is not implemented", msg.Type)
 		c.callLoopEvent(msg.Namespace, OnError, err)
