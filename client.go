@@ -2,7 +2,6 @@ package socketio
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -55,9 +54,6 @@ func Dial(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 
 	return c, nil
 }
-
-// ErrorWrongHeader is used when an unrecognized header is received
-var ErrorWrongHeader = errors.New("wrong header")
 
 // Header of engine.io to send and receive packets
 type Header struct {
