@@ -19,9 +19,7 @@ let rooms = ['King', 'Queen', 'Presidential suite']
 
 class AirNotices {
   getStatusFunc (socket) {
-    return () => {
-      this.getStatus(socket)
-    }
+    return () => this.getStatus(socket)
   }
 
   getStatus (socket) {
