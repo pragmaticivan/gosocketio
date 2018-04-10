@@ -10,7 +10,7 @@ golang socket.io is an implementation for the [socket.io](https://socket.io) pro
 ## on "connection", "error", and "disconnection"
 **Wait for the socket.io connection event before emitting messages or you risk losing them** due in an unpredictable fashion (due to concurrency: connection latency, server load, etc.).
 
-To overcome this you should always use socketio.Connect instead of socketio.DialOnly (only exposed for debugging).
+To overcome this, you should always use socketio.Connect instead of socketio.DialOnly (only exposed for debugging).
 
 And before emitting a message on a namespace, you want to wait for the ready signal, like so:
 
@@ -32,7 +32,7 @@ if err := exampleNamespace.Emit("fleet", 100); err != nil {
 
 You probably want to use a `select` receiving a second channel, such as context.Done() to avoid program loop, leak memory, or both in case of failure on all non-trivial programs.
 
-This is not necessarily on the default namespace, which is automatically ready.
+The default namespace is automatically ready after establishing the socket.io session.
 
 ## Connecting to a socket.io server with a custom namespace
 You can connect to a namespace and start emitting messages to it with:
