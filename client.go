@@ -77,7 +77,7 @@ func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 
 // DialOnly connects to the host and initializes the socket.io protocol.
 // It doesn't wait for socket.io connection handshake.
-// You probably want to use Connect instead.
+// You probably want to use Connect instead. Only exposed for debugging.
 func DialOnly(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 	return dial(u, tr)
 }
