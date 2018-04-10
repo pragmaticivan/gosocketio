@@ -31,7 +31,7 @@ const (
 // It blocks for the timeout duration. If the connection is not established in time,
 // it closes the connection and returns an error.
 func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
-	c, err = Dial(u, tr)
+	c, err = dial(u, tr)
 
 	if err != nil {
 		return nil, err
@@ -75,8 +75,14 @@ func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 	return c, err
 }
 
-// Dial connects to the host and initializes the socket.io protocol
-func Dial(u url.URL, tr *websocket.Transport) (c *Client, err error) {
+// DialOnly connects to the host and initializes the socket.io protocol.
+// It doesn't wait for socket.io connection handshake.
+// You probably want to use Connect instead.
+func DialOnly(u url.URL, tr *websocket.Transport) (c *Client, err error) {
+	return dial(u, tr)
+}
+
+func dial(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 	c = &Client{}
 	c.init()
 
