@@ -14,16 +14,16 @@ import (
 )
 
 const (
-	// OnConnection for "connection" messages
+	// OnConnection for "connection" messages.
 	OnConnection = protocol.OnConnection
 
-	// OnDisconnect for "disconnect" messages
+	// OnDisconnect for "disconnect" messages.
 	OnDisconnect = protocol.OnDisconnect
 
-	// OnError for "error" messages
+	// OnError for "error" messages.
 	OnError = protocol.OnError
 
-	// default namespace is always empty
+	// default namespace is always empty.
 	defaultNamespace = ""
 )
 

@@ -8,7 +8,7 @@ import (
 	"github.com/henvic/socketio/internal/protocol"
 )
 
-// NewNamespace creates a namespace
+// NewNamespace creates a namespace.
 func NewNamespace(c *Client, namespace string) *Namespace {
 	return &Namespace{
 		name: namespace,
@@ -19,7 +19,7 @@ func NewNamespace(c *Client, namespace string) *Namespace {
 	}
 }
 
-// Namespace for the connection
+// Namespace for the connection.
 type Namespace struct {
 	name string
 
@@ -28,7 +28,7 @@ type Namespace struct {
 	writeMessage func(message string) error
 }
 
-// On registers a listener
+// On registers a listener.
 func (n *Namespace) On(method string, f interface{}) error {
 	h, err := NewHandler(f)
 
@@ -45,7 +45,7 @@ func (n *Namespace) On(method string, f interface{}) error {
 	return nil
 }
 
-// Off unregisters a listener
+// Off unregisters a listener.
 func (n *Namespace) Off(method string) {
 	l := location{
 		namespace: n.name,
@@ -55,14 +55,14 @@ func (n *Namespace) Off(method string) {
 	n.getHandlers().Delete(l)
 }
 
-// Listeners on a namespace
+// Listeners on a namespace.
 func (n *Namespace) Listeners() (list []string) {
 	handlers := n.getHandlers()
 
 	return handlers.List(n.name)
 }
 
-// Emit message
+// Emit message.
 func (n *Namespace) Emit(method string, args ...interface{}) error {
 	msg := &protocol.Message{
 		Type:   protocol.MessageTypeEmit,
@@ -72,7 +72,7 @@ func (n *Namespace) Emit(method string, args ...interface{}) error {
 	return n.send(msg, args...)
 }
 
-// Ack packet based on given data and send it and receive response
+// Ack packet based on given data and send it and receive response.
 func (n *Namespace) Ack(ctx context.Context, method string, args interface{}, v interface{}) error {
 	msg := &protocol.Message{
 		Type:   protocol.MessageTypeAckRequest,
