@@ -38,7 +38,10 @@ func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), tr.PingTimeout)
+	defer cancel()
+
 	handshake := make(chan struct{}, 1)
+	ec := make(chan error, 1)
 
 	if err := c.On(OnConnection, func() {
 		handshake <- struct{}{}
@@ -47,9 +50,22 @@ func Connect(u url.URL, tr *websocket.Transport) (c *Client, err error) {
 		return nil, err
 	}
 
+	if err := c.On(OnError, func(err error) {
+		ec <- err
+	}); err != nil {
+		cancel()
+		return nil, err
+	}
+
 	select {
 	case <-handshake:
 		c.Off(OnConnection)
+		c.Off(OnError)
+	case e := <-ec:
+		c = nil
+		err = e
+		c.Off(OnConnection)
+		c.Off(OnError)
 	case <-ctx.Done():
 		c = nil
 		err = fmt.Errorf("socket.io connection timeout (%v)", tr.PingTimeout)
