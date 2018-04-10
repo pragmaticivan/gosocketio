@@ -8,11 +8,11 @@ golang socket.io is an implementation for the [socket.io](https://socket.io) pro
 
 
 ## on "connection", "error", and "disconnection"
-**Wait for the socket.io connection event before emitting messages or you risk losing them** due in an unpredictable fashion (due to concurrency: connection latency, server load, etc.).
+socket.io has three special events it triggers on the client-side and you should not emit them on your own programs.
 
-To overcome this, you should always use socketio.Connect instead of socketio.DialOnly (only exposed for debugging).
+**Wait for the socket.io connection event before emitting messages or you risk losing them** due in an unpredictable fashion (due to concurrency: connection latency, server load, etc.). For the default namespace this is automatically handled on socketio.Connect.
 
-And before emitting a message on a namespace, you want to wait for the ready signal, like so:
+However, before emitting a message on a custom namespace, you want to wait for the ready signal, like so:
 
 ```go
 ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
@@ -30,9 +30,9 @@ if err := exampleNamespace.Emit("fleet", 100); err != nil {
 }
 ```
 
-You probably want to use a `select` receiving a second channel, such as context.Done() to avoid program loop, leak memory, or both in case of failure on all non-trivial programs.
+The reason why you probably want to use a `select` receiving a second channel, such as context.Done() on all non-trivial programs is to avoid program loop, leak memory, or both in case of failure.
 
-The default namespace is automatically ready after establishing the socket.io session.
+The default namespace is automatically ready after establishing the socket.io session. Therefore, `*socketio.Client` doesn't expose a `Ready()` method.
 
 ## Connecting to a socket.io server with a custom namespace
 You can connect to a namespace and start emitting messages to it with:
