@@ -16,6 +16,8 @@ func NewNamespace(c *Client, namespace string) *Namespace {
 		getHandlers:  c.getHandlers,
 		getAck:       c.getAck,
 		writeMessage: c.writeMessage,
+
+		ready: make(chan struct{}, 1),
 	}
 }
 
@@ -26,6 +28,18 @@ type Namespace struct {
 	getHandlers  func() *handlers
 	getAck       func() *ack.Waiter
 	writeMessage func(message string) error
+
+	ready chan struct{}
+}
+
+// Ready returns a channel that informs whether the namespace is already connected.
+// It is a more idiomatic Go way to do 'on "connection"'.
+func (n *Namespace) Ready() <-chan struct{} {
+	return n.ready
+}
+
+func (n *Namespace) setReady() {
+	n.ready <- struct{}{}
 }
 
 // On registers a listener.

@@ -449,6 +449,9 @@ func (c *Client) incomingHandler(msg *protocol.Message) {
 			return
 		}
 
+		def, _ := c.Of(defaultNamespace)
+		def.setReady()
+
 		c.callLoopEvent(msg.Namespace, protocol.OnConnection)
 	case protocol.MessageTypePing:
 		if err := c.writeMessage(protocol.PongMessage); err != nil {
@@ -466,6 +469,8 @@ func (c *Client) incomingHandler(msg *protocol.Message) {
 		c.handleIncomingAckResponse(msg)
 	case protocol.MessageTypeEmpty:
 		if msg.Namespace != defaultNamespace {
+			def, _ := c.Of(msg.Namespace)
+			def.setReady()
 			c.handleIncomingNamespaceConnection(msg)
 		}
 	default:
