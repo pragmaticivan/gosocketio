@@ -49,9 +49,15 @@ io.on('connection', function (socket) {
   let scheduledGoodbyeTimeout = setTimeout(function () {
     console.log('Sending goodbye message to client.')
     socket.emit('goodbye')
-  }, 20000)
+  }, 120000)
 
   socket.on('book_hotel_for_tonight', (location, fn) => {
+    // fail booking 50% of the requests
+    if (Math.random() > 0.5) {
+      console.error('Failing to book a room at %s', location)
+      return
+    }
+
     console.log('Hotel room booked at %s Airport Hotel.', location)
     let indexPerson = Math.floor(Math.random() * people.length)
     let indexRoom = Math.floor(Math.random() * rooms.length)

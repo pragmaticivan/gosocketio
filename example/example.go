@@ -86,22 +86,29 @@ func doSomething(c *socketio.Client) {
 	index2 := rand.Intn(len(Airports))
 
 	if index1 == index2 {
-		var res HotelReservation
-		err := c.Ack(context.Background(), "book_hotel_for_tonight", Airports[index1], &res)
-
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
-
-		fmt.Printf("%s has reserved a %s bedroom for $%d near %s.\n", res.Name, res.Room, res.Price, res.Location)
-		return
+		bookHotelRoom(c, Airports[index1])
 	}
 
 	if err := c.Emit("find_tickets", Route{
 		From: Airports[index1],
 		To:   Airports[index2],
 	}); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
+
+func bookHotelRoom(c *socketio.Client, hotel string) {
+	var ctx, cancel = context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	var res HotelReservation
+	switch err := c.Ack(ctx, "book_hotel_for_tonight", hotel, &res); {
+	case err == nil:
+		fmt.Printf("%s has booked a %s bedroom for $%d near %s.\n", res.Name, res.Room, res.Price, res.Location)
+	case err == context.DeadlineExceeded || err == context.Canceled:
+		fmt.Fprintf(os.Stderr, "couldn't complete a booking at %s: %v", hotel, err)
+	case err != nil:
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
@@ -133,7 +140,7 @@ type goodbye struct {
 func (g *goodbye) Handler() {
 	fmt.Print(`Oops! This program is exiting in 5s to demonstrate a clean termination approach.
 Comment the "goodbye" event listener in the Go code example to avoid this from happening.
-The server sends this "goodbye" message 20 seconds after the connection has been established.
+The server sends this "goodbye" message 120 seconds after the connection has been established.
 `)
 	time.Sleep(5 * time.Second)
 	g.cancel()
