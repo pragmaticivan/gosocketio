@@ -76,30 +76,34 @@ func main() {
 			ticker.Stop()
 			return
 		case <-ticker.C:
-			index1 := rand.Intn(len(Airports))
-			index2 := rand.Intn(len(Airports))
-
-			if index1 == index2 {
-				var res HotelReservation
-				err := c.Ack(context.Background(), "book_hotel_for_tonight", Airports[index1], &res)
-
-				if err != nil {
-					fmt.Fprintln(os.Stderr, err)
-					os.Exit(1)
-				}
-
-				fmt.Printf("%s has reserved a %s bedroom for $%d near %s.\n", res.Name, res.Room, res.Price, res.Location)
-				continue
-			}
-
-			if err := c.Emit("find_tickets", Route{
-				From: Airports[index1],
-				To:   Airports[index2],
-			}); err != nil {
-				fmt.Fprintln(os.Stderr, err)
-				os.Exit(1)
-			}
+			doSomething(c)
 		}
+	}
+}
+
+func doSomething(c *socketio.Client) {
+	index1 := rand.Intn(len(Airports))
+	index2 := rand.Intn(len(Airports))
+
+	if index1 == index2 {
+		var res HotelReservation
+		err := c.Ack(context.Background(), "book_hotel_for_tonight", Airports[index1], &res)
+
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		fmt.Printf("%s has reserved a %s bedroom for $%d near %s.\n", res.Name, res.Room, res.Price, res.Location)
+		return
+	}
+
+	if err := c.Emit("find_tickets", Route{
+		From: Airports[index1],
+		To:   Airports[index2],
+	}); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
 
