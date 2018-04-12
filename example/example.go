@@ -107,7 +107,7 @@ func bookHotelRoom(c *socketio.Client, hotel string) {
 	case err == nil:
 		fmt.Printf("%s has booked a %s bedroom for $%d near %s.\n", res.Name, res.Room, res.Price, res.Location)
 	case err == context.DeadlineExceeded || err == context.Canceled:
-		fmt.Fprintf(os.Stderr, "couldn't complete a booking at %s: %v", hotel, err)
+		fmt.Fprintf(os.Stderr, "Couldn't complete a booking at %s.\n", hotel)
 	case err != nil:
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

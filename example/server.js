@@ -74,11 +74,6 @@ io.on('connection', function (socket) {
     console.log('Quote for tickets from %s to %s requested.', route.From, route.To)
   })
 
-  socket.on('book_hotel_for_tonight', (location, cb) => {
-    console.log('Booking hotel room in %s.', location)
-          cb('Hello!') // eslint-disable-line
-  })
-
   socket.on('error', (err) => {
     console.error(err)
   })
