@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/henvic/socketio"
-	"github.com/henvic/socketio/websocket"
+	"github.com/wedeploy/gosocketio"
+	"github.com/wedeploy/gosocketio/websocket"
 )
 
 // Route to fly.
@@ -39,17 +39,17 @@ func main() {
 		Host:   "localhost:3000",
 	}
 
-	c, err := socketio.Connect(u, websocket.NewTransport())
+	c, err := gosocketio.Connect(u, websocket.NewTransport())
 
 	if err != nil {
 		panic(err) // you should prefer returning errors than panicking
 	}
 
-	if err := c.On(socketio.OnError, errorHandler); err != nil {
+	if err := c.On(gosocketio.OnError, errorHandler); err != nil {
 		panic(err)
 	}
 
-	if err := c.On(socketio.OnDisconnect, disconnectHandler); err != nil {
+	if err := c.On(gosocketio.OnDisconnect, disconnectHandler); err != nil {
 		panic(err)
 	}
 
@@ -81,7 +81,7 @@ func main() {
 	}
 }
 
-func doSomething(c *socketio.Client) {
+func doSomething(c *gosocketio.Client) {
 	index1 := rand.Intn(len(Airports))
 	index2 := rand.Intn(len(Airports))
 
@@ -98,7 +98,7 @@ func doSomething(c *socketio.Client) {
 	}
 }
 
-func bookHotelRoom(c *socketio.Client, hotel string) {
+func bookHotelRoom(c *gosocketio.Client, hotel string) {
 	var ctx, cancel = context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -133,7 +133,7 @@ func skipHandler(vehicle string) {
 }
 
 type goodbye struct {
-	client *socketio.Client
+	client *gosocketio.Client
 	cancel context.CancelFunc
 }
 

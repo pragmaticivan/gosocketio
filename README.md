@@ -1,4 +1,4 @@
-# golang socket.io [![GoDoc](https://godoc.org/github.com/henvic/socketio?status.svg)](https://godoc.org/github.com/henvic/socketio)
+# golang socket.io [![GoDoc](https://godoc.org/github.com/wedeploy/gosocketio?status.svg)](https://godoc.org/github.com/wedeploy/gosocketio)
 
 golang socket.io is an implementation for the [socket.io](https://socket.io) protocol in Go. There is a lack of specification for the socket.io protocol, so reverse engineering is the easiest way to find out how it works.
 
